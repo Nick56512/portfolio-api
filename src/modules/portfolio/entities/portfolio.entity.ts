@@ -7,7 +7,7 @@ import {
   ForeignKey,
   HasMany,
 } from 'sequelize-typescript';
-import { User } from '../../users/entities/user.entity';
+import { User } from '../../auth/entities/user.entity';
 import { Image } from '../../images/entities/image.entity';
 
 @Table({
