@@ -1,3 +1,4 @@
+import { Match } from "@common/decorators/match.decorator";
 import { IsEmail, IsNotEmpty, IsOptional, IsString, IsStrongPassword, Length } from "class-validator";
 
 export class RegistrationRequest {
@@ -17,6 +18,7 @@ export class RegistrationRequest {
         minLength: 5,
         minNumbers: 2,
     })
+    @Match('password')
     confirmPassword: string;
 
     @IsOptional()
