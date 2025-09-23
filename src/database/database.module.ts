@@ -4,7 +4,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { Image } from '../modules/images/entities/image.entity';
 import { ConfigParams } from 'src/config';
 import { Portfolio } from '../modules/portfolio/entities/portfolio.entity';
-import { User } from '../modules/auth/entities/user.entity';
+import { User } from '../modules/user/entities/user.entity';
 import { Comment } from '../modules/comments/entities/comment.entity';
 
 @Module({
@@ -25,7 +25,7 @@ import { Comment } from '../modules/comments/entities/comment.entity';
           logging: (sql: string) => {
             logger.log(`[SQL]: ${sql}`);
           },
-          synchronize: false
+          synchronize: false,
         };
       },
     }),
