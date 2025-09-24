@@ -25,7 +25,7 @@ import { Comment } from '../modules/comments/entities/comment.entity';
           logging: (sql: string) => {
             logger.log(`[SQL]: ${sql}`);
           },
-          synchronize: true,
+          synchronize: false,
         };
       },
     }),
