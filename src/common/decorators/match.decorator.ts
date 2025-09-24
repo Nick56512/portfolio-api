@@ -1,18 +1,25 @@
-import { registerDecorator, ValidationOptions, ValidationArguments } from 'class-validator';
+import {
+  registerDecorator,
+  ValidationArguments,
+  ValidationOptions,
+} from 'class-validator';
 
-//TODO
-export function Match(property: string, validationOptions?: ValidationOptions) {
-  return (object: any, propertyName: string) => {
+export function Match(
+  property: string,
+  validationOptions?: ValidationOptions,
+) {
+  return function (object: Record<string, any>, propertyName: string) {
     registerDecorator({
-      name: 'match',
+      name: 'Match',
       target: object.constructor,
-      propertyName: propertyName,
+      propertyName,
       options: validationOptions,
       constraints: [property],
       validator: {
         validate(value: any, args: ValidationArguments) {
           const [relatedPropertyName] = args.constraints;
-          return value === (args.object as any)[relatedPropertyName];
+          const relatedValue = (args.object as any)[relatedPropertyName];
+          return value === relatedValue;
         },
         defaultMessage(args: ValidationArguments) {
           const [relatedPropertyName] = args.constraints;

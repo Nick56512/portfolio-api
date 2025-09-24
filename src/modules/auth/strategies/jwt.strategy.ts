@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { InjectModel } from '@nestjs/sequelize';
 import { Strategy, ExtractJwt } from 'passport-jwt';
-import { ConfigParams } from 'src/config';
+import { ConfigParams } from '@common/config';
 import { User } from '../../../modules/user/entities/user.entity';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
