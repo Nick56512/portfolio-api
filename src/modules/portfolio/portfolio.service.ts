@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { PortfolioDto } from './dto/portfolio.dto';
 import { Portfolio } from './entities/portfolio.entity';
@@ -19,11 +23,11 @@ export class PortfolioService {
   }
 
   public async getPortfolioById(id: number) {
-    const result = await this.portfolioModel.findByPk(id)
-    if(!result) {
-        throw new NotFoundException('Portfolio with this id does not exists')
+    const result = await this.portfolioModel.findByPk(id);
+    if (!result) {
+      throw new NotFoundException('Portfolio with this id does not exists');
     }
-    return result
+    return result;
   }
 
   public async removePortfolio(id: number) {

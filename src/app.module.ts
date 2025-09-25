@@ -13,7 +13,7 @@ import { ImagesModule } from '@modules/images/images.module';
     AuthModule,
     UserModule,
     PortfolioModule,
-    ImagesModule
+    ImagesModule,
   ],
   controllers: [],
   providers: [],

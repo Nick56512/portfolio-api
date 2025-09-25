@@ -39,18 +39,17 @@ export class PortfolioController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
-  public async removePortfolio( 
-      @Param('id') id: number,
-      @Req() req)  
-  {
-    const userId = req.user.userId
-    const portfolio = await this.portfolioService.getPortfolioById(id)
-    if(portfolio.userId !== userId) {
-        throw new ForbiddenException("You cannot delete other users's portfolios")
+  public async removePortfolio(@Param('id') id: number, @Req() req) {
+    const userId = req.user.userId;
+    const portfolio = await this.portfolioService.getPortfolioById(id);
+    if (portfolio.userId !== userId) {
+      throw new ForbiddenException(
+        "You cannot delete other users's portfolios",
+      );
     }
     const result = await this.portfolioService.removePortfolio(id);
     return {
-        success: result
-    }
+      success: result,
+    };
   }
 }

@@ -85,4 +85,3 @@ export class Comment extends Model {
   @BelongsTo(() => Image)
   image: Image;
 }
-

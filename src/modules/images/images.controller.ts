@@ -1,73 +1,92 @@
-import { multerOptions } from "@common/config/multer.config";
-import { RoutingControllerKeys } from "@common/routes/routes";
-import { Controller, 
-    HttpCode, 
-    HttpStatus, 
-    Post, 
-    UseInterceptors, 
-    UploadedFile,
-    Body, 
-    Req, 
-    UseGuards, 
-    ForbiddenException, 
-    Param, 
-    ParseIntPipe, 
-    Query,
-    Delete
-} from "@nestjs/common";
-import { FileInterceptor } from "@nestjs/platform-express";
-import { UploadImageRequest } from "./dto/upload.image.request";
-import { PortfolioService } from "@modules/portfolio/portfolio.service";
-import { ImageService } from "./images.service";
-import { JwtAuthGuard } from "@modules/auth/guards/jwt.auth.guard";
+import { multerOptions } from '@common/config/multer.config';
+import { RoutingControllerKeys } from '@common/routes/routes';
+import {
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseInterceptors,
+  UploadedFile,
+  Body,
+  Req,
+  UseGuards,
+  ForbiddenException,
+  Param,
+  ParseIntPipe,
+  Query,
+  Delete,
+  Get,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UploadImageRequest } from './dto/upload.image.request';
+import { PortfolioService } from '@modules/portfolio/portfolio.service';
+import { ImageService } from './images.service';
+import { JwtAuthGuard } from '@modules/auth/guards/jwt.auth.guard';
+import { JwtStrategy } from '@modules/auth/strategies/jwt.strategy';
 
 @Controller(RoutingControllerKeys.Image)
 export class ImagesController {
+  constructor(
+    private readonly portfolioService: PortfolioService,
+    private readonly imagesService: ImageService,
+  ) {}
 
-    constructor(
-        private readonly portfolioService: PortfolioService,
-        private readonly imagesService: ImageService
-    ) {}
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  public getByRange(
+    @Query('offset', ParseIntPipe) offset: number,
+    @Query('limit', ParseIntPipe) limit: number
+  ) 
+  {
+    return this.imagesService.getImagesByRange(offset, limit)
+  }
 
-    @Post()
-    @HttpCode(HttpStatus.CREATED)
-    @UseInterceptors(FileInterceptor('file', multerOptions))
-    @UseGuards(JwtAuthGuard)
-    public async uploadImage(
-        @UploadedFile() file: Express.Multer.File,
-        @Body() newImage: UploadImageRequest,
-        @Req() req,
-        @Query('portfolioId', ParseIntPipe) portfolioId: number
-    ) {
-        const userId = req.user.userId
-        this.checkIsUserHaveImage(portfolioId, userId)
-        const result = await this.imagesService.createImageInPortfolio({
-            ...newImage,
-            fileName: file.filename,
-            filePath: file.path,
-            portfolioId
-        })
-        return {
-            newImageId: result.id,
-            success: true
-        }
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  @UseInterceptors(FileInterceptor('file', multerOptions))
+  @UseGuards(JwtAuthGuard)
+  public async uploadImage(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() newImage: UploadImageRequest,
+    @Req() req,
+    @Query('portfolioId', ParseIntPipe) portfolioId: number,
+  ) {
+    const userId = req.user.userId;
+    const portfolio = await this.portfolioService.getPortfolioById(portfolioId);
+    if (portfolio.userId !== userId) {
+      throw new ForbiddenException(
+        "You cannot add images to someone else's portfolio.",
+      );
     }
+    const result = await this.imagesService.createImageInPortfolio({
+      ...newImage,
+      fileName: file.filename,
+      filePath: file.path,
+      portfolioId,
+    });
+    return {
+      newImageId: result.id,
+      success: true,
+    };
+  }
 
-    private async checkIsUserHaveImage(portfolioId: number, userId: number) {
-        const portfolio = await this.portfolioService.getPortfolioById(portfolioId)
-        if(portfolio.userId !== userId) {
-            throw new ForbiddenException("You cannot add images to someone else's portfolio.")
-        }
+  @Delete(':id')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  public async removeImage(@Param('id') id: number, @Req() req) {
+    const userId = req.user.userId;
+    const image = await this.imagesService.getImageById(id);
+    const portfolio = await this.portfolioService.getPortfolioById(
+      image.portfolioId,
+    );
+    if (portfolio.userId !== userId) {
+      throw new ForbiddenException(
+        "You cannot delete images in someone else's portfolio.",
+      );
     }
-
-    @Delete(':id')
-    @HttpCode(HttpStatus.OK)
-    public async removePortfolio( 
-      @Param('id') id: number,
-      @Req() req)  
-    {
-        const image = 
-    }
-
-
+    const success = this.imagesService.removeImage(image);
+    return {
+      success
+    };
+  }
 }
