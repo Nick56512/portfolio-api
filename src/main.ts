@@ -8,6 +8,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ConfigParams } from './common/config';
 import { HttpExceptionFilter } from '@common/filters/http.exception.filter';
+import { LoggingInterceptor } from '@common/interceptors/logging.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -28,6 +29,7 @@ async function bootstrap() {
     }),
   );
   app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalInterceptors(new LoggingInterceptor())
   const configService = app.get(ConfigService);
   await app.listen(configService.get<number>(ConfigParams.APP_PORT) ?? 3000);
 }

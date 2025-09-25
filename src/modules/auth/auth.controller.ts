@@ -6,7 +6,6 @@ import {
   Post,
   UseGuards,
   Headers,
-  ForbiddenException,
   UnauthorizedException,
 } from '@nestjs/common';
 import {
