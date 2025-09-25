@@ -1,6 +1,20 @@
 import { multerOptions } from "@common/config/multer.config";
 import { RoutingControllerKeys } from "@common/routes/routes";
-import { Controller, HttpCode, HttpStatus, Post, UseInterceptors, UploadedFile, Body, Req, UseGuards, NotFoundException, ForbiddenException } from "@nestjs/common";
+import { Controller, 
+    HttpCode, 
+    HttpStatus, 
+    Post, 
+    UseInterceptors, 
+    UploadedFile,
+    Body, 
+    Req, 
+    UseGuards, 
+    ForbiddenException, 
+    Param, 
+    ParseIntPipe, 
+    Query,
+    Delete
+} from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { UploadImageRequest } from "./dto/upload.image.request";
 import { PortfolioService } from "@modules/portfolio/portfolio.service";
@@ -22,13 +36,38 @@ export class ImagesController {
     public async uploadImage(
         @UploadedFile() file: Express.Multer.File,
         @Body() newImage: UploadImageRequest,
-        @Req() req
+        @Req() req,
+        @Query('portfolioId', ParseIntPipe) portfolioId: number
     ) {
         const userId = req.user.userId
-        const portfolio = await this.portfolioService.getPortfolioById(newImage.portfolioId)
+        this.checkIsUserHaveImage(portfolioId, userId)
+        const result = await this.imagesService.createImageInPortfolio({
+            ...newImage,
+            fileName: file.filename,
+            filePath: file.path,
+            portfolioId
+        })
+        return {
+            newImageId: result.id,
+            success: true
+        }
+    }
+
+    private async checkIsUserHaveImage(portfolioId: number, userId: number) {
+        const portfolio = await this.portfolioService.getPortfolioById(portfolioId)
         if(portfolio.userId !== userId) {
             throw new ForbiddenException("You cannot add images to someone else's portfolio.")
         }
-        const result = this.imagesService.createImageInPortfolio()
     }
+
+    @Delete(':id')
+    @HttpCode(HttpStatus.OK)
+    public async removePortfolio( 
+      @Param('id') id: number,
+      @Req() req)  
+    {
+        const image = 
+    }
+
+
 }

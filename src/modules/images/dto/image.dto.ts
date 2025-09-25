@@ -4,4 +4,5 @@ export class ImageDto {
     portfolioId: number
     description?: string;
     fileName: string
+    filePath: string
 }

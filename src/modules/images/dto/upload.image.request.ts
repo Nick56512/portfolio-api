@@ -5,10 +5,6 @@ export class UploadImageRequest {
     @IsNotEmpty()
     name: string;
 
-    @IsNumber()
-    @Min(1)
-    portfolioId: number
-
     @IsString()
     @IsOptional()
     description?: string;
