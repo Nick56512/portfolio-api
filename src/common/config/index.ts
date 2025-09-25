@@ -8,5 +8,5 @@ export const enum ConfigParams {
   JWT_SECRET = 'JWT_SECRET',
   JWT_EXPIRES = 'JWT_EXPIRES',
   REDIS_PORT = 'REDIS_PORT',
-  REDIS_HOST = 'REDIS_HOST'
+  REDIS_HOST = 'REDIS_HOST',
 }

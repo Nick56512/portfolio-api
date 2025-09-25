@@ -1,4 +1,9 @@
-import { ConflictException, HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  HttpException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './entities/user.entity';
 import { RegistrationRequest } from './dto/registration.request';
@@ -8,7 +13,7 @@ import { UserDto } from './dto/user.dto';
 export class UserService {
   constructor(@InjectModel(User) private readonly userModel: typeof User) {}
 
-  public async registration(userDto: UserDto): Promise<User> {
+  public async registration(userDto: UserDto): Promise<UserDto> {
     const existingUser = await this.userModel.findOne({
       where: {
         email: userDto.email,
@@ -26,12 +31,12 @@ export class UserService {
   public async removeUser(userId: number): Promise<boolean> {
     const result = await this.userModel.destroy({
       where: {
-        id: userId
-      }
-    })
-    if(result === 0) {
-      throw new NotFoundException('User with this id is not found')
+        id: userId,
+      },
+    });
+    if (result === 0) {
+      throw new NotFoundException('User with this id is not found');
     }
-    return result > 0
+    return result > 0;
   }
 }

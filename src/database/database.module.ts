@@ -1,11 +1,10 @@
 import { Module, Logger } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { Image } from '../modules/images/entities/image.entity';
+import { Image, Comment } from '../modules/images/entities/image.entity';
 import { ConfigParams } from '@common/config';
 import { Portfolio } from '../modules/portfolio/entities/portfolio.entity';
 import { User } from '../modules/user/entities/user.entity';
-import { Comment } from '../modules/comments/entities/comment.entity';
 
 @Module({
   imports: [

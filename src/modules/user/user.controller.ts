@@ -14,7 +14,7 @@ import {
   Headers,
   BadRequestException,
   Req,
-  ForbiddenException
+  ForbiddenException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { RegistrationRequest } from './dto/registration.request';
@@ -24,8 +24,9 @@ import { AuthService } from '@modules/auth/auth.service';
 
 @Controller(RoutingControllerKeys.User)
 export class UserController {
-  constructor(private readonly userService: UserService,
-              private readonly authService: AuthService
+  constructor(
+    private readonly userService: UserService,
+    private readonly authService: AuthService,
   ) {}
 
   @Post(RoutingEndpointKeys.Registration)
@@ -48,21 +49,21 @@ export class UserController {
   public async remove(
     @Param('id') id: number,
     @Headers('authorization') authHeader: string,
-    @Req() req
+    @Req() req,
   ) {
-    if(!id) {
-      throw new BadRequestException('ID cannot be empty')
+    if (!id) {
+      throw new BadRequestException('ID cannot be empty');
     }
-    if(req.user.userId !== +id) {
+    if (req.user.userId !== +id) {
       throw new ForbiddenException('You can only delete your own profile');
     }
     const result = await this.userService.removeUser(id);
-    if(result) {
-      const token = authHeader.split(' ')[1]
-      await this.authService.logout(token)
+    if (result) {
+      const token = authHeader.split(' ')[1];
+      await this.authService.logout(token);
     }
     return {
-      success: result
-    }
+      success: result,
+    };
   }
 }

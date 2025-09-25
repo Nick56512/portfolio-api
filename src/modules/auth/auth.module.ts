@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigParams } from '@common/config';
@@ -29,18 +29,18 @@ import { JwtStrategy } from './strategies/jwt.strategy';
         const redis = redisStore({
           socket: {
             host: configService.get<string>(ConfigParams.REDIS_HOST),
-            port: configService.get<number>(ConfigParams.REDIS_PORT)
-          }
-        })
+            port: configService.get<number>(ConfigParams.REDIS_PORT),
+          },
+        });
         return {
-          store: () => redis
-        }
+          store: () => redis,
+        };
       },
-      inject: [ConfigService]
-    })
+      inject: [ConfigService],
+    }),
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
-  exports: [ JwtModule, CacheModule ]
+  exports: [JwtModule, CacheModule],
 })
 export class AuthModule {}

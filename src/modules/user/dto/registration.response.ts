@@ -4,7 +4,7 @@ import { Min } from 'sequelize-typescript';
 export class RegistrationResponse {
   @IsNumber()
   @Min(1)
-  newUserId: number;
+  newUserId?: number;
 
   @IsBoolean()
   success: boolean;

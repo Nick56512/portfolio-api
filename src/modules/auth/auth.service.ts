@@ -18,8 +18,7 @@ export class AuthService {
   constructor(
     @InjectModel(User) private readonly userModel: typeof User,
     private readonly jwtService: JwtService,
-    @Inject(CACHE_MANAGER) private readonly cache: Cache
-
+    @Inject(CACHE_MANAGER) private readonly cache: Cache,
   ) {}
 
   public async login(loginRequest: LoginRequest): Promise<LoginResponse> {
@@ -34,17 +33,15 @@ export class AuthService {
       );
     }
     return {
-      accessToken: this.jwtService.sign(
-        {
-          userId: user.id,
-        }
-      ),
+      accessToken: this.jwtService.sign({
+        userId: user.id,
+      }),
     };
   }
 
   public async logout(token: string) {
-    const payload = this.jwtService.decode(token)
+    const payload = this.jwtService.decode(token);
     //const ttl = payload.exp - Math.floor(Date.now() / 1000)
-    await this.cache.set<string>(payload.userId.toString(), token)
+    await this.cache.set<string>(payload.userId.toString(), token);
   }
 }

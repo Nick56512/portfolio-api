@@ -8,7 +8,6 @@ import {
   Model,
 } from 'sequelize-typescript';
 import { Portfolio } from '../../portfolio/entities/portfolio.entity';
-import { Comment } from '../../comments/entities/comment.entity';
 
 @Table({
   tableName: 'images',
@@ -44,18 +43,6 @@ export class Image extends Model {
   })
   filePath: string;
 
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: false,
-  })
-  fileSize: number;
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  mimeType: string;
-
   @ForeignKey(() => Portfolio)
   @Column({
     type: DataType.INTEGER,
@@ -69,3 +56,33 @@ export class Image extends Model {
   @HasMany(() => Comment)
   comments: Comment[];
 }
+
+@Table({
+  tableName: 'comments',
+  timestamps: true,
+})
+export class Comment extends Model {
+  @Column({
+    type: DataType.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  })
+  id: number;
+
+  @Column({
+    type: DataType.TEXT,
+    allowNull: false,
+  })
+  content: string;
+
+  @ForeignKey(() => Image)
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  imageId: number;
+
+  @BelongsTo(() => Image)
+  image: Image;
+}
+

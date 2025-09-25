@@ -12,7 +12,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private readonly configService: ConfigService,
     @InjectModel(User) private readonly userModel: typeof User,
-    @Inject(CACHE_MANAGER) private readonly cache: Cache
+    @Inject(CACHE_MANAGER) private readonly cache: Cache,
   ) {
     super({
       ignoreExpiration: false,
@@ -22,18 +22,19 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any): Promise<number> {
-
     const userId: number = payload.userId;
     const user = await this.userModel.findByPk(userId);
     if (!user) {
       throw new UnauthorizedException('Invalid token');
     }
 
-    const fromBlacklist = await this.cache.get<string>(userId.toString())
-    if(fromBlacklist) {
-      throw new UnauthorizedException('You have been logged out, please log in again');
+    const fromBlacklist = await this.cache.get<string>(userId.toString());
+    if (fromBlacklist) {
+      throw new UnauthorizedException(
+        'You have been logged out, please log in again',
+      );
     }
-    
-    return payload
+
+    return payload;
   }
 }
