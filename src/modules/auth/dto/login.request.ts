@@ -1,13 +1,15 @@
-import { IsNotEmpty, IsEmail, IsStrongPassword } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsEmail,
+  IsString,
+} from 'class-validator';
 
 export class LoginRequest {
   @IsEmail()
   @IsNotEmpty()
   email: string;
 
-  @IsStrongPassword({
-    minLength: 5,
-    minNumbers: 2,
-  })
+  @IsString()
+  @IsNotEmpty()
   password: string;
 }

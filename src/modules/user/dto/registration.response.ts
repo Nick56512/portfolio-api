@@ -1,11 +1,11 @@
-import { IsBoolean, IsNumber } from "class-validator";
-import { Min } from "sequelize-typescript";
+import { IsBoolean, IsNumber } from 'class-validator';
+import { Min } from 'sequelize-typescript';
 
 export class RegistrationResponse {
-    @IsNumber()
-    @Min(1)
-    newUserId: number
+  @IsNumber()
+  @Min(1)
+  newUserId: number;
 
-    @IsBoolean()
-    success: boolean
+  @IsBoolean()
+  success: boolean;
 }
