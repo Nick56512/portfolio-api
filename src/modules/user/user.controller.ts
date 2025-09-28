@@ -19,7 +19,7 @@ import {
 import { UserService } from './user.service';
 import { RegistrationRequest } from './dto/registration.request';
 import { RegistrationResponse } from './dto/registration.response';
-import { JwtAuthGuard } from '@modules/auth/guards/jwt.auth.guard';
+import { JwtAccessGuard } from '@modules/auth/guards/jwt.access.guard';
 import { AuthService } from '@modules/auth/auth.service';
 
 @Controller(RoutingControllerKeys.User)
@@ -45,7 +45,7 @@ export class UserController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAccessGuard)
   public async remove(
     @Param('id') id: number,
     @Headers('authorization') authHeader: string,

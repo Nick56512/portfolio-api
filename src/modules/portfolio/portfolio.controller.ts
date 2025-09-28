@@ -12,11 +12,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { PortfolioService } from './portfolio.service';
-import { JwtAuthGuard } from '@modules/auth/guards/jwt.auth.guard';
+import { JwtAccessGuard } from '@modules/auth/guards/jwt.access.guard';
 import { CreatePortfolioRequest } from './dto/create.portfolio.request';
 
 @Controller(RoutingControllerKeys.Portfolio)
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAccessGuard)
 export class PortfolioController {
   constructor(private readonly portfolioService: PortfolioService) {}
 

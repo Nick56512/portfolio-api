@@ -9,21 +9,14 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { User } from '@modules/user/entities/user.entity';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-store';
-import { JwtStrategy } from './strategies/jwt.strategy';
+import { JwtAccessStrategy } from './strategies/jwt.access.strategy';
+import { JwtRefreshStrategy } from './strategies/jwt.refresh.strategy';
 
 @Module({
   imports: [
     SequelizeModule.forFeature([User]),
     PassportModule,
-    JwtModule.registerAsync({
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.getOrThrow<string>(ConfigParams.JWT_SECRET),
-        signOptions: {
-          expiresIn: configService.getOrThrow<string>(ConfigParams.JWT_EXPIRES),
-        },
-      }),
-      inject: [ConfigService],
-    }),
+    JwtModule,
     CacheModule.registerAsync({
       useFactory: (configService: ConfigService) => {
         const redis = redisStore({
@@ -40,7 +33,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtAccessStrategy, JwtRefreshStrategy],
   exports: [JwtModule, CacheModule],
 })
 export class AuthModule {}

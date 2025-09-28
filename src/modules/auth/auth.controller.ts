@@ -7,14 +7,16 @@ import {
   UseGuards,
   Headers,
   UnauthorizedException,
+  Req
 } from '@nestjs/common';
 import {
   RoutingControllerKeys,
   RoutingEndpointKeys,
-} from 'src/common/routes/routes';
+} from '@common/routes/routes';
 import { LoginRequest } from './dto/login.request';
 import { AuthService } from './auth.service';
-import { JwtAuthGuard } from './guards/jwt.auth.guard';
+import { JwtAccessGuard } from './guards/jwt.access.guard';
+import { JwtRefreshGuard } from './guards/jwt.refresh.guard';
 
 @Controller(RoutingControllerKeys.Auth)
 export class AuthController {
@@ -23,12 +25,12 @@ export class AuthController {
   @Post(RoutingEndpointKeys.Login)
   @HttpCode(HttpStatus.OK)
   public login(@Body() loginRequest: LoginRequest) {
-    return this.authService.login(loginRequest);
+    return this.authService.loginByCredentials(loginRequest);
   }
 
   @Post(RoutingEndpointKeys.Logout)
   @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAccessGuard)
   public async logout(@Headers('authorization') authHeader: string) {
     if (!authHeader) {
       throw new UnauthorizedException(
@@ -36,9 +38,17 @@ export class AuthController {
       );
     }
     const token = authHeader.split(' ')[1];
-    await this.authService.logout(token);
+    const success = await this.authService.logout(token);
     return {
-      success: true,
+      success
     };
+  }
+
+  @Post(RoutingEndpointKeys.Refresh)
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtRefreshGuard)
+  public async refresh(@Req() request) {
+    const userId = request.user.id
+    return this.authService.generateTokens(userId)
   }
 }

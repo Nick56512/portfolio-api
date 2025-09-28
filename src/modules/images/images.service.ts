@@ -8,12 +8,15 @@ import { Image } from './entities/image.entity';
 import { ImageDto } from './dto/image.dto';
 import * as fs from 'fs';
 import { Portfolio } from '@modules/portfolio/entities/portfolio.entity';
+import { getFileName } from '@common/utils/get.file.name';
 
 @Injectable()
 export class ImageService {
   constructor(@InjectModel(Image) private readonly imageModel: typeof Image) {}
 
-  public async createImageInPortfolio(image: ImageDto): Promise<ImageDto> {
+  public async createImageInPortfolio(image: ImageDto, fileBuffer: Buffer): Promise<ImageDto> {
+    await fs.promises.writeFile(image.filePath, fileBuffer)
+    
     const result = await this.imageModel.create({
       ...image,
     });
